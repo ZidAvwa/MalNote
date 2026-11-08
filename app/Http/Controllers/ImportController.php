@@ -42,7 +42,7 @@ class ImportController extends Controller
             $session = ImportSession::create(['filename' => $file->getClientOriginalName()]);
 
             $session->entries()->createMany(
-                collect($titles)->map(fn ($title, $i) => [
+                collect($titles)->map(fn($title, $i) => [
                     'position' => $i,
                     'original_title' => $title,
                 ])->all()
@@ -56,8 +56,12 @@ class ImportController extends Controller
 
     public function show(ImportSession $session)
     {
-        return view('imports.show', [
-            'session' => $session->loadCount('entries'),
-        ]);
+        $total = $session->entries()->count();
+
+        $entry = $session->entries()
+            ->where('position', $session->current_index)
+            ->first();
+
+        return view('imports.show', compact('session', 'entry', 'total'));
     }
 }
