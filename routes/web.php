@@ -3,7 +3,11 @@
 use App\Http\Controllers\ImportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ReviewController;
 
+Route::post('/imports/{session}/submit', [ReviewController::class, 'submit'])->name('imports.submit');
+Route::post('/imports/{session}/skip', [ReviewController::class, 'skip'])->name('imports.skip');
+Route::post('/imports/{session}/back', [ReviewController::class, 'back'])->name('imports.back');
 Route::get('/search', SearchController::class)
     ->middleware('throttle:60,1')
     ->name('search');
