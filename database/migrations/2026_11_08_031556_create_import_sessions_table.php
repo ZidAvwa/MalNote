@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('import_sessions', function (Blueprint $table) {
             $table->id();
+            $table->string('filename');
+            $table->unsignedInteger('current_index')->default(0);
             $table->timestamps();
         });
     }

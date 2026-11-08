@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MAL List Importer</title>
+</head>
+<body style="font-family: Arial; background:#1e1e1e; color:#d4d4d4; padding:40px;">
+    <h1>MAL List Importer</h1>
+
+    @if ($errors->any())
+        <p style="color:#f87171;">{{ $errors->first() }}</p>
+    @endif
+
+    <form method="POST" action="{{ route('imports.store') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="file" accept=".txt" required>
+        <button type="submit">Upload & Start</button>
+    </form>
+</body>
+</html>
