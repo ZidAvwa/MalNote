@@ -37,4 +37,21 @@ class ImportIndexTest extends TestCase
             ->assertOk()
             ->assertSee('No imports yet.');
     }
+
+    public function test_delete_removes_session_and_entries(): void
+    {
+        $session = ImportSession::create([
+            'filename' => 'Anime.txt',
+            'mal_user_id' => '1',
+            'mal_user_name' => 'Tester',
+        ]);
+
+        $session->entries()->create(['position' => 0, 'original_title' => 'A']);
+
+        $this->delete(route('imports.destroy', $session))
+            ->assertRedirect(route('imports.index'));
+
+        $this->assertDatabaseMissing('import_sessions', ['id' => $session->id]);
+        $this->assertDatabaseCount('import_entries', 0);
+    }
 }

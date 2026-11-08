@@ -6,17 +6,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Past imports</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #1e1e1e; color: #d4d4d4; margin: 0; padding: 24px; }
-        a { color: #4fc1ff; }
-        table { border-collapse: collapse; width: 100%; margin-top: 16px; }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #333; }
-        th { color: #aaa; font-weight: normal; }
-        .badge { padding: 3px 8px; font-size: 12px; }
-        .done { background: #16a34a; color: #fff; }
-        .progress { background: #d97706; color: #fff; }
-        .btn { display: inline-block; padding: 7px 12px; color: #fff; text-decoration: none; font-size: 13px; }
-        .btn-blue { background: #0e639c; }
-        .btn-green { background: #16a34a; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            margin: 0;
+            padding: 24px;
+        }
+
+        a {
+            color: #4fc1ff;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            color: #aaa;
+            font-weight: normal;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            font-size: 12px;
+        }
+
+        .done {
+            background: #16a34a;
+            color: #fff;
+        }
+
+        .progress {
+            background: #d97706;
+            color: #fff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 7px 12px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .btn-blue {
+            background: #0e639c;
+        }
+
+        .btn-green {
+            background: #16a34a;
+        }
+
+        .btn-red {
+            background: #dc2626;
+            border: 0;
+            cursor: pointer;
+            font-family: inherit;
+        }
     </style>
 </head>
 
@@ -60,6 +116,13 @@
                                 {{ $finished ? 'Open' : 'Continue' }}
                             </a>
                             <a class="btn btn-green" href="{{ route('imports.export', $session) }}">Download XML</a>
+                            <form method="POST" action="{{ route('imports.destroy', $session) }}"
+                                style="display:inline;"
+                                onsubmit="return confirm('Delete this import and all its reviewed titles? This cannot be undone.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-red">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

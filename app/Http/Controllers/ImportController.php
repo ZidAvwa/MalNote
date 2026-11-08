@@ -82,4 +82,13 @@ class ImportController extends Controller
 
         return view('imports.index', compact('sessions'));
     }
+    public function destroy(ImportSession $session)
+    {
+        DB::transaction(function () use ($session) {
+            $session->entries()->delete();
+            $session->delete();
+        });
+
+        return redirect()->route('imports.index');
+    }
 }
