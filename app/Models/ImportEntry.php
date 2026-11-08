@@ -8,8 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ImportEntry extends Model
 {
     protected $fillable = [
-        'import_session_id', 'position', 'original_title', 'mal_id',
-        'final_title', 'score', 'status', 'skipped',
+        'import_session_id',
+        'position',
+        'original_title',
+        'mal_id',
+        'final_title',
+        'score',
+        'status',
+        'skipped',
+        'series_type',
+        'series_episodes',
     ];
 
     protected $casts = ['skipped' => 'boolean'];

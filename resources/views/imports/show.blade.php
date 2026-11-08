@@ -274,6 +274,8 @@
                 const ok = await post(urls.submit, {
                     mal_id: selected.mal_id,
                     final_title: $('final-title').value.trim(),
+                    series_type: selected.type,
+                    series_episodes: selected.episodes || 0,
                     score: document.querySelector('input[name=score]:checked').value,
                     status: document.querySelector('input[name=status]:checked').value,
                 });
@@ -290,7 +292,7 @@
 
             runSearch(); // auto-search the current title on load
         </script>
-        @else
+    @else
         <h1>{{ $session->filename }}</h1>
         <p>All {{ $total }} titles reviewed.</p>
         <button id="back-btn" style="background:#d97706; color:#fff; border:0; padding:10px 16px; cursor:pointer;">◄ Go

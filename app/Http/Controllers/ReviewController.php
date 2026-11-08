@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+
 class ReviewController extends Controller
 {
     public function submit(Request $request, ImportSession $session): JsonResponse
@@ -16,8 +17,11 @@ class ReviewController extends Controller
             'final_title' => ['required', 'string', 'max:255'],
             'score'       => ['required', 'integer', 'between:0,10'],
             'status'      => ['required', Rule::in(['Completed', 'Watching', 'On-Hold', 'Plan to Watch', 'Dropped'])],
+            'series_type'     => ['nullable', 'string', 'max:20'],
+            'series_episodes' => ['nullable', 'integer', 'min:0'],
         ]);
 
+        $data['series_episodes'] ??= 0;
         $entry = $this->currentEntry($session);
         abort_if(! $entry, 404);
 
@@ -33,7 +37,13 @@ class ReviewController extends Controller
         abort_if(! $entry, 404);
 
         // clear any earlier submission, so a skipped title never ends up in the export
-        $entry->update(['skipped' => true, 'mal_id' => null, 'final_title' => null]);
+        $entry->update([
+            'skipped' => true,
+            'mal_id' => null,
+            'final_title' => null,
+            'series_type' => null,
+            'series_episodes' => 0,
+        ]);
         $this->advance($session);
 
         return response()->json(['ok' => true]);
