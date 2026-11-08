@@ -16,3 +16,4 @@ Route::get('/search', SearchController::class)
 Route::get('/', [ImportController::class, 'create'])->name('imports.create');
 Route::post('/imports', [ImportController::class, 'store'])->name('imports.store');
 Route::get('/imports/{session}', [ImportController::class, 'show'])->name('imports.show');
+Route::get('/imports', [ImportController::class, 'index'])->name('imports.index');

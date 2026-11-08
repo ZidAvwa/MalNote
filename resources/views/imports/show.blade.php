@@ -168,6 +168,8 @@
 </head>
 
 <body>
+    <p><a href="{{ route('imports.index') }}" style="color:#4fc1ff;">← All imports</a></p>
+    
     @if ($entry)
         <div class="top">
             <div class="progress">Progress: {{ $session->current_index + 1 }}/{{ $total }}</div>

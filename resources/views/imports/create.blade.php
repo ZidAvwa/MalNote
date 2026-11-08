@@ -9,6 +9,8 @@
 <body style="font-family: Arial; background:#1e1e1e; color:#d4d4d4; padding:40px;">
     <h1>MAL List Importer</h1>
 
+    <p><a href="{{ route('imports.index') }}" style="color:#4fc1ff;">View past imports</a></p>
+    
     @if ($errors->any())
         <p style="color:#f87171;">{{ $errors->first() }}</p>
     @endif

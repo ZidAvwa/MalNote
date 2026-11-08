@@ -70,4 +70,16 @@ class ImportController extends Controller
 
         return view('imports.show', compact('session', 'entry', 'total'));
     }
+
+    public function index()
+    {
+        $sessions = ImportSession::withCount([
+            'entries',
+            'entries as submitted_count' => fn($query) => $query
+                ->where('skipped', false)
+                ->whereNotNull('mal_id'),
+        ])->latest()->get();
+
+        return view('imports.index', compact('sessions'));
+    }
 }
