@@ -17,7 +17,9 @@ class ImportController extends Controller
     public function store(Request $request, BatchParser $parser)
     {
         $request->validate([
-            'file' => ['required', 'file', 'mimes:txt', 'max:2048'],
+            'file'          => ['required', 'file', 'mimes:txt', 'max:2048'],
+            'mal_user_name' => ['required', 'string', 'max:50'],
+            'mal_user_id'   => ['required', 'digits_between:1,12'],
         ]);
 
         $file = $request->file('file');
@@ -38,8 +40,12 @@ class ImportController extends Controller
             return back()->withErrors(['file' => 'No anime titles found in that file.']);
         }
 
-        $session = DB::transaction(function () use ($file, $titles) {
-            $session = ImportSession::create(['filename' => $file->getClientOriginalName()]);
+        $session = DB::transaction(function () use ($request, $file, $titles) {
+            $session = ImportSession::create([
+                'filename'      => $file->getClientOriginalName(),
+                'mal_user_name' => $request->input('mal_user_name'),
+                'mal_user_id'   => $request->input('mal_user_id'),
+            ]);
 
             $session->entries()->createMany(
                 collect($titles)->map(fn($title, $i) => [

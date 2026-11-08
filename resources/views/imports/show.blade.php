@@ -284,20 +284,27 @@
                 if (await post(urls.skip)) location.reload();
             });
 
+            $('save-btn').addEventListener('click', () => {
+                window.location = urls.export;
+            });
+
             runSearch(); // auto-search the current title on load
-        </script> // auto-search the current title on load
         </script>
-    @else
+        @else
         <h1>{{ $session->filename }}</h1>
         <p>All {{ $total }} titles reviewed.</p>
         <button id="back-btn" style="background:#d97706; color:#fff; border:0; padding:10px 16px; cursor:pointer;">◄ Go
             Back</button>
+        <a href="{{ route('imports.export', $session) }}"
+            style="background:#2563eb; color:#fff; padding:10px 16px; text-decoration:none;">Download XML</a>
     @endif
+
     <script>
         const urls = {
             submit: @json(route('imports.submit', $session)),
             skip: @json(route('imports.skip', $session)),
             back: @json(route('imports.back', $session)),
+            export: @json(route('imports.export', $session)),
         };
 
         async function post(url, body = {}) {
