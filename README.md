@@ -1,58 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MAL List Importer (MalNote)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel web app that turns a plain text anime list into a MyAnimeList import file (XML).
 
-## About Laravel
+Upload your list, review each title against AniList search results, pick a status and rating, and download an XML you can import into MyAnimeList.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Upload a `.txt` list; titles like `Naruto S1.S2` or `Naruto M1` are expanded into separate searches
+- Auto-searches AniList for each title, with a manual search box for corrections
+- Pick a status and a rating (0 to 10) for every title, or skip it
+- Go back and change an earlier answer
+- Progress is saved, so you can close the tab and continue later
+- Past imports page with continue, download and delete
+- Exports the same XML format as the original Python version
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requirements
 
-## Learning Laravel
+- PHP 8.2 or newer
+- Composer
+- No Node.js needed
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/ZidAvwa/MalNote.git
+cd MalNote
+composer install
+copy .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Then open http://localhost:8000.
 
-## Contributing
+The default database is SQLite. If `php artisan migrate` asks to create `database/database.sqlite`, answer yes.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+On macOS or Linux, use `cp .env.example .env` instead of `copy`.
 
-## Code of Conduct
+## How to use
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Enter your MAL username and numeric user id. The id is in the `<user_id>` tag of an XML file exported from MAL (myanimelist.net/panel.php?go=export).
+2. Choose your `.txt` list and click **Upload & Start**.
+3. For each title, check the search result, edit the title if needed, choose a status and rating, then click **Submit & Next** (or **Skip Title**).
+4. Click **Save & Exit** or **Download XML** to get `mal_<filename>.xml`.
+5. Import it at myanimelist.net/import.php with the type "MyAnimeList Import".
 
-## Security Vulnerabilities
+## List file format
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+One title per line:
 
-## License
+```
+Attack on Titan
+Naruto S1.S2.S3
+Your Name M1
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `S2` means "Season 2" (`S1` adds nothing), `M1` means "Movie 1". Combine them with dots: `S1.S2.M1`.
+- Blank lines and lines starting with `[` or `#` are ignored.
+- Reading stops at the first line that contains `Manga`.
+- `LiveAction` is removed from the search text unless the line also contains `S1`.
+
+## Tests
+
+```bash
+php artisan test
+```
+
+## Project structure
+
+| Path | Purpose |
+|---|---|
+| `app/Services/AniListService.php` | AniList search with timeout and retries |
+| `app/Services/BatchParser.php` | Turns the uploaded text into search titles |
+| `app/Services/MalXmlBuilder.php` | Builds the MAL XML export |
+| `app/Http/Controllers/` | Import, review, search and export controllers |
+| `resources/views/imports/` | Upload, review and past imports pages |
+
+## Notes
+
+- Search results come from AniList and are cached for 10 minutes. Titles without a MAL id are hidden.
+- `.env` and the SQLite database are not committed.
