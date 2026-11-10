@@ -2,7 +2,7 @@ name: Playwright E2E
 
 on:
   push:
-    branches: [main, playwright-tests]
+    branches: [main, 'chore/playwright-tests']
   pull_request:
     branches: [main]
   workflow_dispatch:
